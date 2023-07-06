@@ -1,11 +1,5 @@
 const User = require('../models/user');
-// const httpStatusCode = require('../errors/httpStatusCode');
-
-const httpStatusCode = {
-  BAD_REQUEST: 400,
-  NOT_FOUND: 404,
-  INTERNAL_SERVER_ERROR: 500,
-};
+const { httpStatusCode } = require('../errors/httpStatusCode');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -62,9 +56,13 @@ const updateUser = (req, res) => {
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message.includes('Validation failed')) {
         res.status(httpStatusCode.BAD_REQUEST).send({
           message: 'Переданы некорректные данные при обновлении профиля',
+        });
+      } else if (err.name === 'CastError') {
+        res.status(httpStatusCode.BAD_REQUEST).send({
+          message: 'Некорректный id пользователя',
         });
       } else if (err.message === 'Not found') {
         res.status(httpStatusCode.NOT_FOUND).send({
@@ -88,9 +86,13 @@ const updateAvatar = (req, res) => {
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message.includes('Validation failed')) {
         res.status(httpStatusCode.BAD_REQUEST).send({
           message: 'Переданы некорректные данные при обновлении профиля',
+        });
+      } else if (err.name === 'CastError') {
+        res.status(httpStatusCode.BAD_REQUEST).send({
+          message: 'Некорректный id пользователя',
         });
       } else if (err.message === 'Not found') {
         res.status(httpStatusCode.NOT_FOUND).send({
