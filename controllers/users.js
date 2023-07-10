@@ -79,6 +79,7 @@ const createUser = (req, res, next) => {
         .then((user) => res.status(201).send(user))
         .catch((err) => {
           if (err.message.includes('Validation failed')) {
+            console.log(err);
             next(new BadRequestError('Вы ввели некоректные данные'));
           } else if (err.code === 11000) {
             next(new ConflictError('Пользователь с таким email уже существует'));
