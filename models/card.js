@@ -10,8 +10,6 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    minlength: 2,
-    maxlength: 100,
     required: true,
   },
   owner: {
