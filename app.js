@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 
@@ -13,11 +14,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   // eslint-disable-next-line no-console
 }).then(() => console.log('DB Connected'));
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(requestLogger);
 app.use(router);
-
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
